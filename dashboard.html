@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Inventory Barang Toko</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles for better mobile experience */
+        @media (max-width: 640px) {
+            .mobile-collapse {
+                flex-direction: column;
+            }
+            .mobile-full {
+                width: 100% !important;
+            }
+        }
+        
+        /* Animation for sidebar */
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        
+        /* Active menu item styling */
+        .active-menu {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Main Container -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar-transition bg-blue-800 text-white w-64 flex flex-col md:flex hidden">
+            <!-- Logo and App Title -->
+            <div class="p-6 border-b border-blue-700">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white p-2 rounded-lg">
+                        <i class="fas fa-boxes text-blue-800 text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Inventory Toko</h1>
+                        <p class="text-blue-200 text-sm">Dashboard Admin</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1 p-4 overflow-y-auto">
+                <div class="mb-6">
+                    <h3 class="text-blue-300 text-xs uppercase font-semibold tracking-wider mb-3">Dashboard</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="dashboard.html" class="flex items-center space-x-3 p-3 rounded-lg active-menu">
+                                <i class="fas fa-tachometer-alt w-5"></i>
+                                <span>Dashboard Utama</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-blue-300 text-xs uppercase font-semibold tracking-wider mb-3">Master Data</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="../master/kategori.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-tags w-5"></i>
+                                <span>Kategori Barang</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../master/satuan.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-balance-scale w-5"></i>
+                                <span>Satuan</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../master/supplier.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-truck w-5"></i>
+                                <span>Supplier</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../master/customer.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-users w-5"></i>
+                                <span>Customer</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../master/barang.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-box w-5"></i>
+                                <span>Data Barang</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../master/stok-awal.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-clipboard-check w-5"></i>
+                                <span>Stok Awal</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-blue-300 text-xs uppercase font-semibold tracking-wider mb-3">Transaksi</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="../transaksi/barang-masuk.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-arrow-down w-5"></i>
+                                <span>Barang Masuk</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../transaksi/barang-keluar.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-arrow-up w-5"></i>
+                                <span>Barang Keluar</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../transaksi/riwayat.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-history w-5"></i>
+                                <span>Riwayat Transaksi</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-blue-300 text-xs uppercase font-semibold tracking-wider mb-3">Laporan</h3>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="../laporan/stok.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-chart-bar w-5"></i>
+                                <span>Laporan Stok</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../laporan/riwayat-masuk-keluar.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-exchange-alt w-5"></i>
+                                <span>Masuk/Keluar</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../laporan/kartu-stok.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-address-card w-5"></i>
+                                <span>Kartu Stok</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- User Profile -->
+            <div class="p-4 border-t border-blue-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-medium">Admin Toko</p>
+                        <p class="text-blue-300 text-sm">Administrator</p>
+                    </div>
+                    <a href="#" class="text-blue-300 hover:text-white">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow-sm border-b px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="text-gray-500 focus:outline-none md:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    
+                    <!-- Breadcrumb -->
+                    <div class="hidden md:flex items-center space-x-2 text-sm">
+                        <a href="dashboard.html" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                        <span class="text-gray-400">/</span>
+                        <span class="text-gray-600">Utama</span>
+                    </div>
+                    
+                    <!-- Search and Notifications -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Search -->
+                        <div class="relative hidden md:block">
+                            <input type="text" placeholder="Cari data..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        
+                        <!-- Notifications -->
+                        <button class="relative p-2 text-gray-600 hover:text-blue-600">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                        
+                        <!-- Settings -->
+                        <button class="p-2 text-gray-600 hover:text-blue-600">
+                            <i class="fas fa-cog text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-6 text-white mb-6">
+                    <div class="flex flex-col md:flex-row items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl md:text-3xl font-bold mb-2">Selamat Datang, Admin!</h1>
+                            <p class="text-blue-100">Kelola inventory toko Anda dengan mudah dan efisien.</p>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <span class="bg-blue-500 bg-opacity-50 px-3 py-1 rounded-full text-sm">Total Barang: 245</span>
+                                <span class="bg-green-500 bg-opacity-50 px-3 py-1 rounded-full text-sm">Stok Aman: 218</span>
+                                <span class="bg-yellow-500 bg-opacity-50 px-3 py-1 rounded-full text-sm">Stok Menipis: 24</span>
+                                <span class="bg-red-500 bg-opacity-50 px-3 py-1 rounded-full text-sm">Stok Habis: 3</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 md:mt-0">
+                            <button class="bg-white text-blue-700 font-semibold px-6 py-3 rounded-lg hover:bg-blue-50 transition duration-300 flex items-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Transaksi Baru</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Nilai Stok</p>
+                                <p class="text-2xl font-bold text-gray-800">Rp 48.250.000</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-money-bill-wave text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">+2.5% dari bulan lalu</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Barang Masuk (Bulan Ini)</p>
+                                <p class="text-2xl font-bold text-gray-800">142 Barang</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-arrow-down text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">+18% dari bulan lalu</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Barang Keluar (Bulan Ini)</p>
+                                <p class="text-2xl font-bold text-gray-800">89 Barang</p>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <i class="fas fa-arrow-up text-red-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-red-600 text-sm font-medium">-5% dari bulan lalu</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Transaksi Hari Ini</p>
+                                <p class="text-2xl font-bold text-gray-800">12 Transaksi</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">+3 dari kemarin</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts and Recent Activity -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Stok Chart -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-bold text-gray-800">Perbandingan Stok</h2>
+                            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Bulan Ini</option>
+                                <option>Bulan Lalu</option>
+                                <option>Tahun Ini</option>
+                            </select>
+                        </div>
+                        <div class="h-72">
+                            <canvas id="stockChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Transactions -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Transaksi Terbaru</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-left text-gray-500 text-sm border-b">
+                                        <th class="pb-3">Tanggal</th>
+                                        <th class="pb-3">Jenis</th>
+                                        <th class="pb-3">Barang</th>
+                                        <th class="pb-3">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3">15 Jun 2023</td>
+                                        <td><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Masuk</span></td>
+                                        <td class="py-3">Mie Instan</td>
+                                        <td class="py-3">50</td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3">14 Jun 2023</td>
+                                        <td><span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">Keluar</span></td>
+                                        <td class="py-3">Minuman Kaleng</td>
+                                        <td class="py-3">24</td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3">13 Jun 2023</td>
+                                        <td><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Masuk</span></td>
+                                        <td class="py-3">Sabun Mandi</td>
+                                        <td class="py-3">100</td>
+                                    </tr>
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="py-3">12 Jun 2023</td>
+                                        <td><span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">Keluar</span></td>
+                                        <td class="py-3">Biskuit</td>
+                                        <td class="py-3">45</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-3">11 Jun 2023</td>
+                                        <td><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">Masuk</span></td>
+                                        <td class="py-3">Kopi Sachet</td>
+                                        <td class="py-3">80</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <a href="../transaksi/riwayat.html" class="text-blue-600 hover:text-blue-800 font-medium">Lihat Semua Riwayat →</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Low Stock Alert -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-800">Stok Barang Menipis</h2>
+                        <a href="../laporan/stok.html" class="text-blue-600 hover:text-blue-800 font-medium">Lihat Semua</a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold">Mie Instan Rasa Ayam</h3>
+                                <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">10 pcs</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Kategori: Makanan Instan</p>
+                            <div class="mt-3 flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 20%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold">Sabun Mandi Cair</h3>
+                                <span class="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">5 pcs</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Kategori: Perawatan Diri</p>
+                            <div class="mt-3 flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 15%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-red-200 rounded-lg p-4 bg-red-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold">Kopi Sachet 3in1</h3>
+                                <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">2 pcs</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Kategori: Minuman</p>
+                            <div class="mt-3 flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-red-500 h-2 rounded-full" style="width: 5%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <!-- Footer -->
+            <footer class="bg-white border-t px-6 py-4">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="text-gray-600 text-sm mb-2 md:mb-0">
+                        <p>&copy; 2023 Inventory Toko. Semua hak dilindungi.</p>
+                    </div>
+                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                        <a href="#" class="hover:text-blue-600">Bantuan</a>
+                        <a href="#" class="hover:text-blue-600">Kebijakan Privasi</a>
+                        <a href="#" class="hover:text-blue-600">Syarat & Ketentuan</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- JavaScript for Interactive Elements -->
+    <script src="../js/main.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('md:flex');
+            sidebar.classList.toggle('absolute');
+            sidebar.classList.toggle('z-50');
+            sidebar.classList.toggle('h-full');
+        });
+        
+        // Initialize chart when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Stock Chart
+            const stockCtx = document.getElementById('stockChart').getContext('2d');
+            const stockChart = new Chart(stockCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Makanan', 'Minuman', 'Perawatan', 'Elektronik', 'Peralatan'],
+                    datasets: [{
+                        label: 'Stok Saat Ini',
+                        data: [120, 85, 65, 42, 38],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Stok Minimal',
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+            
+            // Set active menu item based on current page
+            const currentPage = window.location.pathname.split('/').pop();
+            const menuItems = document.querySelectorAll('aside nav a');
+            
+            menuItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href === currentPage || (currentPage === '' && href === 'dashboard.html')) {
+                    item.classList.add('active-menu');
+                } else {
+                    item.classList.remove('active-menu');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+/* styles for Inventory Toko */
+:root{
+  --bg:#f9fafb;
+  --text:#111827;
+  --accent:#2563eb;
+}
+html,body{height:100%;margin:0;font-family:Segoe UI, Roboto, Arial, sans-serif;background:var(--bg);color:var(--text)}
+header{padding:1rem;background:#fff;border-bottom:1px solid #e5e7eb}
+.container{max-width:1100px;margin:2rem auto;padding:1rem}

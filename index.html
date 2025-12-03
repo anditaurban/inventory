@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Toko - Sistem Manajemen Stok</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Custom styles */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .wave-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+        
+        .wave-bg svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+        
+        .wave-bg .shape-fill {
+            fill: #FFFFFF;
+        }
+        
+        /* Animation for login form */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .wave-bg svg {
+                height: 100px;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
+                        <i class="fas fa-boxes text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">Inventory<span class="text-blue-600">Toko</span></h1>
+                        <p class="text-xs text-gray-500">Sistem Manajemen Stok</p>
+                    </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-blue-600 font-medium">Beranda</a>
+                    <a href="#features" class="text-gray-700 hover:text-blue-600 font-medium">Fitur</a>
+                    <a href="#about" class="text-gray-700 hover:text-blue-600 font-medium">Tentang</a>
+                    <a href="#contact" class="text-gray-700 hover:text-blue-600 font-medium">Kontak</a>
+                    <a href="#" id="login-btn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition duration-300">
+                        Masuk ke Dashboard
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-700">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden py-4 border-t">
+                <div class="flex flex-col space-y-4">
+                    <a href="#home" class="text-gray-700 hover:text-blue-600 font-medium">Beranda</a>
+                    <a href="#features" class="text-gray-700 hover:text-blue-600 font-medium">Fitur</a>
+                    <a href="#about" class="text-gray-700 hover:text-blue-600 font-medium">Tentang</a>
+                    <a href="#contact" class="text-gray-700 hover:text-blue-600 font-medium">Kontak</a>
+                    <a href="#" id="mobile-login-btn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg text-center hover:shadow-lg transition duration-300">
+                        Masuk ke Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md fade-in">
+            <div class="p-8">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Masuk ke Sistem</h2>
+                        <p class="text-gray-600">Akses dashboard inventory toko Anda</p>
+                    </div>
+                    <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="login-form">
+                    <div class="mb-6">
+                        <label for="username" class="block text-gray-700 mb-2">Username</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="username" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan username" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="password" class="block text-gray-700 mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="password" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Masukkan password" required>
+                            <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <i class="fas fa-eye text-gray-400"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="remember" class="ml-2 text-gray-700">Ingat saya</label>
+                        </div>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">Lupa password?</a>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition duration-300 mb-4">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Masuk Sekarang
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-gray-600 text-sm">Demo login: admin / password123</p>
+                    </div>
+                </form>
+                
+                <!-- Demo Account Alert -->
+                <div id="demo-alert" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                Gunakan <span class="font-bold">admin</span> sebagai username dan <span class="font-bold">password123</span> sebagai password untuk mencoba aplikasi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 rounded-b-2xl p-6 text-center">
+                <p class="text-gray-600">
+                    Belum punya akun? <a href="#" class="text-blue-600 font-semibold">Hubungi administrator</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg pt-24 pb-20 md:pb-32 relative overflow-hidden">
+        <!-- Animated Background Elements -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-300 bg-opacity-10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                        Kelola Inventory Toko Anda dengan <span class="text-yellow-300">Mudah</span>
+                    </h1>
+                    <p class="text-xl text-white text-opacity-90 mb-8">
+                        Sistem inventory terintegrasi untuk mengelola stok barang, transaksi, dan laporan dengan efisien. Cocok untuk toko retail, grosir, atau UMKM.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#" id="hero-login-btn" class="bg-white text-blue-700 font-bold px-8 py-4 rounded-lg hover:shadow-2xl transition duration-300 text-center">
+                            <i class="fas fa-rocket mr-2"></i>Mulai Sekarang
+                        </a>
+                        <a href="#features" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-blue-700 transition duration-300 text-center">
+                            <i class="fas fa-play-circle mr-2"></i>Lihat Fitur
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="relative">
+                        <div class="bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 animate-pulse">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold text-gray-800">Dashboard Preview</h3>
+                                <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">Live</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <p class="text-sm text-gray-600">Total Barang</p>
+                                    <p class="text-2xl font-bold text-blue-700">245</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <p class="text-sm text-gray-600">Transaksi Hari Ini</p>
+                                    <p class="text-2xl font-bold text-green-700">12</p>
+                                </div>
+                            </div>
+                            <div class="h-48 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-bar text-5xl text-blue-500 opacity-50"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Floating Elements -->
+                        <div class="absolute -top-4 -right-4 bg-yellow-100 p-4 rounded-xl shadow-lg">
+                            <i class="fas fa-arrow-up text-yellow-600 text-xl"></i>
+                            <p class="text-xs font-bold mt-1">Barang Masuk</p>
+                        </div>
+                        <div class="absolute -bottom-4 -left-4 bg-red-100 p-4 rounded-xl shadow-lg">
+                            <i class="fas fa-arrow-down text-red-600 text-xl"></i>
+                            <p class="text-xs font-bold mt-1">Barang Keluar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wave Background -->
+        <div class="wave-bg">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Fitur Unggulan Sistem</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Sistem inventory kami dilengkapi dengan semua fitur yang Anda butuhkan untuk mengelola stok toko secara efektif
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-gray-50 rounded-2xl p-8 card-hover">
+                    <div class="feature-icon bg-blue-100 text-blue-600">
+                        <i class="fas fa-boxes text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Master Data Lengkap</h3>
+                    <p class="text-gray-600">
+                        Kelola data barang, kategori, satuan, supplier, dan customer dengan sistem terpusat.
+                    </p>
+                    <ul class="mt-4 space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Kategori Barang</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Data Supplier</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Satuan & Konversi</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-gray-50 rounded-2xl p-8 card-hover">
+                    <div class="feature-icon bg-green-100 text-green-600">
+                        <i class="fas fa-exchange-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Transaksi Real-time</h3>
+                    <p class="text-gray-600">
+                        Catat barang masuk dan keluar dengan mudah. Stok otomatis terupdate secara real-time.
+                    </p>
+                    <ul class="mt-4 space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Barang Masuk</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Barang Keluar</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Riwayat Lengkap</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-gray-50 rounded-2xl p-8 card-hover">
+                    <div class="feature-icon bg-purple-100 text-purple-600">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Laporan & Analisis</h3>
+                    <p class="text-gray-600">
+                        Hasilkan laporan stok, transaksi, dan analisis untuk pengambilan keputusan yang lebih baik.
+                    </p>
+                    <ul class="mt-4 space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Laporan Stok</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Kartu Stok Barang</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Analisis Tren</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-gray-50 rounded-2xl p-8 card-hover">
+                    <div class="feature-icon bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-mobile-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Responsif & Modern</h3>
+                    <p class="text-gray-600">
+                        Akses dari desktop, tablet, atau smartphone. Interface modern dan mudah digunakan.
+                    </p>
+                    <ul class="mt-4 space-y-2">
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Desain Responsif</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>UI/UX Modern</span>
+                        </li>
+                        <li class="flex items-center text-gray-600">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span>Akses Mobile</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-12 lg:mb-0">
+                    <div class="bg-white rounded-2xl shadow-xl p-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Tentang Sistem Ini</h2>
+                        <p class="text-gray-600 mb-6">
+                            Sistem Inventory Toko adalah solusi lengkap untuk mengelola stok barang pada usaha retail, grosir, atau UMKM. Dibangun dengan teknologi web modern yang memudahkan pengelolaan data barang secara real-time.
+                        </p>
+                        <p class="text-gray-600 mb-8">
+                            Dengan sistem ini, Anda dapat memantau pergerakan stok, mengontrol persediaan, dan membuat laporan yang akurat untuk mendukung pengambilan keputusan bisnis.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-blue-600 mb-2">100%</div>
+                                <div class="text-gray-600">Web-based</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-green-600 mb-2">Real-time</div>
+                                <div class="text-gray-600">Update Stok</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-purple-600 mb-2">Multi-user</div>
+                                <div class="text-gray-600">Akses</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-yellow-600 mb-2">24/7</div>
+                                <div class="text-gray-600">Ketersediaan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 lg:pl-12">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-8">Alur Kerja Sistem</h3>
+                    
+                    <!-- Workflow Steps -->
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="bg-blue-100 text-blue-600 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">
+                                    1
+                                </div>
+                            </div>
+                            <div class="ml-6">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-2">Setup Master Data</h4>
+                                <p class="text-gray-600">
+                                    Mulai dengan mengisi data kategori, satuan, supplier, dan barang Anda.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="bg-green-100 text-green-600 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">
+                                    2
+                                </div>
+                            </div>
+                            <div class="ml-6">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-2">Input Stok Awal</h4>
+                                <p class="text-gray-600">
+                                    Masukkan stok awal barang yang sudah ada di toko Anda.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="bg-purple-100 text-purple-600 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">
+                                    3
+                                </div>
+                            </div>
+                            <div class="ml-6">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-2">Kelola Transaksi</h4>
+                                <p class="text-gray-600">
+                                    Catat setiap barang masuk dari supplier dan barang keluar ke customer.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4 -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="bg-yellow-100 text-yellow-600 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl">
+                                    4
+                                </div>
+                            </div>
+                            <div class="ml-6">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-2">Pantau & Analisis</h4>
+                                <p class="text-gray-600">
+                                    Gunakan dashboard dan laporan untuk memantau stok dan analisis bisnis.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12">
+                        <a href="#" id="about-login-btn" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition duration-300 inline-flex items-center">
+                            <i class="fas fa-play mr-2"></i>Coba Demo Sekarang
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact CTA Section -->
+    <section id="contact" class="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Siap Mengelola Inventory Toko Anda?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto opacity-90">
+                Mulai gunakan sistem inventory kami hari ini dan rasakan kemudahan dalam mengelola stok toko Anda.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#" id="cta-login-btn" class="bg-white text-blue-700 font-bold px-8 py-4 rounded-lg hover:shadow-2xl transition duration-300">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Masuk ke Sistem
+                </a>
+                <a href="#features" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg hover:bg-white hover:text-blue-700 transition duration-300">
+                    <i class="fas fa-list-alt mr-2"></i>Pelajari Fitur Lengkap
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-500 p-2 rounded-lg">
+                            <i class="fas fa-boxes text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">Inventory<span class="text-blue-400">Toko</span></h2>
+                            <p class="text-sm text-gray-400">Sistem Manajemen Stok</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400">
+                        Solusi lengkap untuk mengelola inventory toko retail, grosir, dan UMKM.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-bold mb-6">Menu Cepat</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-400 hover:text-white">Beranda</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white">Fitur</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white">Tentang</a></li>
+                        <li><a href="#" id="footer-login-btn" class="text-gray-400 hover:text-white">Masuk Sistem</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Modules -->
+                <div>
+                    <h3 class="text-lg font-bold mb-6">Modul Sistem</h3>
+                    <ul class="space-y-3">
+                        <li class="text-gray-400">Master Data</li>
+                        <li class="text-gray-400">Transaksi</li>
+                        <li class="text-gray-400">Laporan</li>
+                        <li class="text-gray-400">Dashboard</li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-lg font-bold mb-6">Kontak</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-envelope mr-3"></i>
+                            <span>support@inventorytoko.com</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-phone mr-3"></i>
+                            <span>(021) 1234-5678</span>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-map-marker-alt mr-3"></i>
+                            <span>Jakarta, Indonesia</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Inventory Toko. Dibuat sebagai contoh project web aplikasi inventory. Demo login: admin / password123</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Login modal functions
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('login-modal').classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            
+            // Show demo alert after 2 seconds
+            setTimeout(() => {
+                document.getElementById('demo-alert').classList.remove('hidden');
+            }, 2000);
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('login-modal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Attach event listeners to all login buttons
+        const loginButtons = [
+            'login-btn',
+            'mobile-login-btn', 
+            'hero-login-btn',
+            'about-login-btn',
+            'cta-login-btn',
+            'footer-login-btn'
+        ];
+        
+        loginButtons.forEach(buttonId => {
+            const button = document.getElementById(buttonId);
+            if (button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openLoginModal();
+                });
+            }
+        });
+        
+        // Close modal button
+        document.getElementById('close-modal').addEventListener('click', closeLoginModal);
+        
+        // Close modal when clicking outside
+        document.getElementById('login-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+        
+        // Toggle password visibility
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Login form submission
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation for demo purposes
+            if (username === 'admin' && password === 'password123') {
+                // Show success message
+                alert('Login berhasil! Mengarahkan ke dashboard...');
+                
+                // In a real app, you would redirect to dashboard
+                window.location.href = 'dashboard.html';
+                
+                // For demo, just close the modal
+                closeLoginModal();
+                
+                // Show success message
+                const loginBtn = document.getElementById('login-btn');
+                if (loginBtn) {
+                    loginBtn.innerHTML = '<i class="fas fa-user mr-2"></i>Admin';
+                }
+                
+            } else {
+                alert('Username atau password salah! Coba admin / password123');
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                
+                // Skip if it's a login button or external link
+                if (href === '#' || this.id.includes('login')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                
+                const targetElement = document.querySelector(href);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // Show demo alert when page loads
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('demo-alert').classList.remove('hidden');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
