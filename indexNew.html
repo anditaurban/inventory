@@ -197,10 +197,6 @@
                     <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition duration-300 mb-4">
                         <i class="fas fa-sign-in-alt mr-2"></i>Masuk Sekarang
                     </button>
-                    
-                    <div class="text-center">
-                        <p class="text-gray-600 text-sm">Demo login: admin / password123</p>
-                    </div>
                 </form>
                 
                 <!-- Demo Account Alert -->
@@ -610,64 +606,73 @@
     <!-- JavaScript -->
     <script>
         // Mobile menu toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
-        
-        // Login modal functions
-        function openLoginModal() {
-            document.getElementById('login-modal').classList.remove('hidden');
-            document.getElementById('login-modal').classList.add('flex');
-            document.body.style.overflow = 'hidden';
-            
-            // Show demo alert after 2 seconds
-            setTimeout(() => {
-                document.getElementById('demo-alert').classList.remove('hidden');
-            }, 2000);
-        }
-        
-        function closeLoginModal() {
-            document.getElementById('login-modal').classList.add('hidden');
-            document.getElementById('login-modal').classList.remove('flex');
-            document.body.style.overflow = 'auto';
-        }
-        
-        // Attach event listeners to all login buttons
-        const loginButtons = [
-            'login-btn',
-            'mobile-login-btn', 
-            'hero-login-btn',
-            'about-login-btn',
-            'cta-login-btn',
-            'footer-login-btn'
-        ];
-        
-        loginButtons.forEach(buttonId => {
-            const button = document.getElementById(buttonId);
-            if (button) {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    openLoginModal();
-                });
+
+        // Login modal handlers
+        const loginModal = document.getElementById('login-modal');
+        const loginForm = document.getElementById('login-form');
+        const closeModalBtn = document.getElementById('close-modal');
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+
+        // Open modal buttons
+        document.getElementById('login-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('hidden');
+            loginModal.classList.add('flex');
+        });
+
+        document.getElementById('mobile-login-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('hidden');
+            loginModal.classList.add('flex');
+        });
+
+        document.getElementById('hero-login-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('hidden');
+            loginModal.classList.add('flex');
+        });
+
+        document.getElementById('about-login-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('hidden');
+            loginModal.classList.add('flex');
+        });
+
+        document.getElementById('cta-login-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('hidden');
+            loginModal.classList.add('flex');
+        });
+
+        document.getElementById('footer-login-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.classList.remove('hidden');
+            loginModal.classList.add('flex');
+        });
+
+        // Close modal
+        closeModalBtn.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+            loginModal.classList.remove('flex');
+        });
+
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.classList.add('hidden');
+                loginModal.classList.remove('flex');
             }
         });
-        
-        // Close modal button
-        document.getElementById('close-modal').addEventListener('click', closeLoginModal);
-        
-        // Close modal when clicking outside
-        document.getElementById('login-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeLoginModal();
-            }
-        });
-        
+
         // Toggle password visibility
-        document.getElementById('toggle-password').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
-            
+        togglePasswordBtn.addEventListener('click', () => {
+            const icon = togglePasswordBtn.querySelector('i');
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.remove('fa-eye');
@@ -678,69 +683,37 @@
                 icon.classList.add('fa-eye');
             }
         });
-        
-        // Login form submission
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // Simple validation for demo purposes
-            if (username === 'admin' && password === 'password123') {
-                // Show success message
-                alert('Login berhasil! Mengarahkan ke dashboard...');
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
                 
-                // In a real app, you would redirect to dashboard
-                window.location.href = 'dashboard.html';
+                const data = await response.json();
                 
-                // For demo, just close the modal
-                closeLoginModal();
-                
-                // Show success message
-                const loginBtn = document.getElementById('login-btn');
-                if (loginBtn) {
-                    loginBtn.innerHTML = '<i class="fas fa-user mr-2"></i>Admin';
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    window.location.href = '/dashboard.html';
+                } else {
+                    alert('Login gagal: ' + (data.message || 'Username atau password salah'));
                 }
-                
-            } else {
-                alert('Username atau password salah! Coba admin / password123');
+            } catch (error) {
+                alert('Terjadi kesalahan: ' + error.message);
             }
-        });
-        
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                
-                // Skip if it's a login button or external link
-                if (href === '#' || this.id.includes('login')) {
-                    return;
-                }
-                
-                e.preventDefault();
-                
-                const targetElement = document.querySelector(href);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Close mobile menu if open
-                    const mobileMenu = document.getElementById('mobile-menu');
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                    }
-                }
-            });
-        });
-        
-        // Show demo alert when page loads
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.getElementById('demo-alert').classList.remove('hidden');
-            }, 3000);
         });
     </script>
 </body>
